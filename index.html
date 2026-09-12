@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<meta name="description" content="Self Payroll - offline attendance and salary management">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon.svg">
+<link rel="stylesheet" href="css/style.css">
+<title>Self Payroll</title>
+</head>
+<body>
+<div class="app-shell">
+<header class="topbar">
+  <div>
+    <div class="brand">Self Payroll</div>
+    <div class="subtitle">Attendance & Salary</div>
+  </div>
+  <button class="icon-btn" id="themeBtn" aria-label="Toggle theme">☾</button>
+</header>
+
+<main id="app">
+<section class="page active" data-page="attendance">
+  <div class="hero-card">
+    <div>
+      <span class="eyebrow">TODAY</span>
+      <h1 id="todayText">—</h1>
+      <p id="clockText">—</p>
+    </div>
+    <div class="status-pill" id="todayStatus">Not punched</div>
+  </div>
+
+  <div class="punch-card">
+    <div class="punch-times">
+      <div><span>IN</span><strong id="inTime">--:--</strong></div>
+      <div><span>OUT</span><strong id="outTime">--:--</strong></div>
+      <div><span>WORK</span><strong id="workTime">0h 0m</strong></div>
+    </div>
+    <button class="primary-btn" id="punchBtn">Punch IN</button>
+    <button class="secondary-btn hidden" id="editTodayBtn">Edit today</button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat"><span>Present</span><b id="presentCount">0</b></div>
+    <div class="stat"><span>Absent</span><b id="absentCount">0</b></div>
+    <div class="stat"><span>Leave</span><b id="leaveCount">0</b></div>
+    <div class="stat"><span>Late</span><b id="lateCount">0</b></div>
+  </div>
+
+  <div class="section-head"><h2>Quick actions</h2></div>
+  <div class="action-grid">
+    <button class="action" data-nav="monthly">📅<span>Monthly attendance</span></button>
+    <button class="action" data-nav="salary">💰<span>Salary slip</span></button>
+    <button class="action" data-nav="profile">👤<span>Profile & settings</span></button>
+  </div>
+</section>
+
+<section class="page" data-page="monthly">
+  <div class="page-title"><div><span class="eyebrow">ATTENDANCE</span><h1>Monthly</h1></div>
+    <input id="monthPicker" type="month">
+  </div>
+  <div class="summary-card">
+    <div><span>Present</span><b id="mPresent">0</b></div>
+    <div><span>Absent</span><b id="mAbsent">0</b></div>
+    <div><span>Leave</span><b id="mLeave">0</b></div>
+    <div><span>Hours</span><b id="mHours">0h</b></div>
+  </div>
+  <div class="table-wrap">
+    <table><thead><tr><th>Date</th><th>Status</th><th>In</th><th>Out</th><th>Hours</th><th>Edit</th></tr></thead>
+    <tbody id="attendanceBody"></tbody></table>
+  </div>
+</section>
+
+<section class="page" data-page="salary">
+  <div class="page-title"><div><span class="eyebrow">PAYROLL</span><h1>Salary Slip</h1></div>
+    <input id="salaryMonth" type="month">
+  </div>
+  <div class="salary-card">
+    <div class="salary-header"><div><span>NET SALARY</span><strong id="netSalary">₹0</strong></div><span class="status-pill">Draft</span></div>
+    <div class="salary-lines">
+      <div><span>Basic salary</span><b id="sBasic">₹0</b></div>
+      <div><span>Allowance</span><b id="sAllowance">₹0</b></div>
+      <div><span>Bonus</span><b id="sBonus">₹0</b></div>
+      <div class="minus"><span>Advance</span><b id="sAdvance">₹0</b></div>
+      <div class="minus"><span>Deduction</span><b id="sDeduction">₹0</b></div>
+    </div>
+  </div>
+  <div class="two-actions">
+    <button class="primary-btn" id="printBtn">Print / Save PDF</button>
+    <button class="secondary-btn" id="shareBtn">Share</button>
+  </div>
+  <p class="hint">Salary values are taken from Profile & Settings.</p>
+</section>
+
+<section class="page" data-page="profile">
+<div id="securityThemeCard" class="card settings-card">
+  <div class="section-title">Appearance & Security</div>
+  <div class="setting-row">
+    <div>
+      <strong>Theme</strong>
+      <div class="muted">Choose Light, Dark or System</div>
+    </div>
+    <select id="themeMode">
+      <option value="system">System</option>
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select>
+  </div>
+  <div class="setting-row" id="darknessSetting">
+    <div style="flex:1">
+      <strong>Darkness</strong>
+      <div class="muted">Adjust dark theme intensity</div>
+      <input id="darknessRange" type="range" min="0" max="100" step="1" value="85" style="width:100%;margin-top:9px">
+    </div>
+    <strong id="darknessValue" style="min-width:48px;text-align:right">85%</strong>
+  </div>
+  <div class="setting-row">
+    <div>
+      <strong>App Lock</strong>
+      <div class="muted">Protect the app with a PIN</div>
+    </div>
+    <label class="switch"><input id="lockEnabled" type="checkbox"><span></span></label>
+  </div>
+  <div class="setting-row">
+    <div>
+      <strong>Fingerprint / Biometric Lock</strong>
+      <div class="muted">Use your phone fingerprint or supported biometric</div>
+    </div>
+    <label class="switch"><input id="biometricEnabled" type="checkbox"><span></span></label>
+  </div>
+  <div id="pinRow" class="setting-row" style="display:none">
+    <div>
+      <strong>Change PIN</strong>
+      <div class="muted">Use a 4–6 digit PIN</div>
+    </div>
+    <button id="changePinBtn" class="secondary-btn" type="button">Change PIN</button>
+  </div>
+</div>
+
+  <div class="page-title"><div><span class="eyebrow">ACCOUNT</span><h1>Profile</h1></div></div>
+  <form id="profileForm" class="form-card">
+    <label>Name<input id="name" placeholder="Your name"></label>
+    <label>Employee ID<input id="employeeId" placeholder="EMP-001"></label>
+    <label>Company<input id="company" placeholder="Company name"></label>
+    <label>Monthly basic salary<input id="basicSalary" type="number" min="0" step="1"></label>
+    <label>Monthly allowance<input id="allowance" type="number" min="0" step="1"></label>
+    <label>Monthly bonus<input id="bonus" type="number" min="0" step="1"></label>
+    <label>Monthly advance<input id="advance" type="number" min="0" step="1"></label>
+    <label>Monthly deduction<input id="deduction" type="number" min="0" step="1"></label>
+    <button class="primary-btn" type="submit">Save profile</button>
+  </form>
+
+  <div class="settings-card">
+    <h2>Data & settings</h2>
+    <button class="secondary-btn" id="exportBtn">Export JSON backup</button>
+    <label class="file-btn">Import JSON backup<input id="importInput" type="file" accept=".json,application/json"></label>
+    <button class="danger-btn" id="resetBtn">Reset all local data</button>
+  </div>
+  <p class="offline-note">● Offline-first. Your data is stored locally in this browser.</p>
+</section>
+</main>
+
+<nav class="bottom-nav">
+  <button class="nav-item active" data-nav="attendance">⌂<span>Attendance</span></button>
+  <button class="nav-item" data-nav="monthly">▦<span>Monthly</span></button>
+  <button class="nav-item" data-nav="salary">₹<span>Salary</span></button>
+  <button class="nav-item" data-nav="profile">♙<span>Profile</span></button>
+</nav>
+</div>
+
+<div id="attendanceModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="attendanceModalTitle">
+  <div class="modal-backdrop" data-close-modal></div>
+  <div class="modal-card">
+    <div class="modal-head">
+      <div><span class="eyebrow">MANUAL EDIT</span><h2 id="attendanceModalTitle">Edit Attendance</h2><p id="editDateLabel" class="modal-date">—</p></div>
+      <button class="icon-btn" type="button" data-close-modal aria-label="Close">✕</button>
+    </div>
+    <form id="attendanceEditForm">
+      <input id="editDate" type="hidden">
+      <label>Status<select id="editStatus"><option>Present</option><option>Absent</option><option>Leave</option><option>Weekly Off</option><option>Holiday</option></select></label>
+      <div class="modal-row"><label>IN Time<input id="editIn" type="time"></label><label>OUT Time<input id="editOut" type="time"></label></div>
+      <label>Note<input id="editNote" placeholder="Optional note"></label>
+      <div class="modal-actions"><button type="button" class="secondary-btn" data-close-modal>Cancel</button><button type="submit" class="primary-btn">Save Changes</button></div>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="js/app.js"></script>
+
+
+
+
+<div id="appLockModal" class="modal-backdrop" style="display:none">
+  <div class="modal-card">
+    <h3>🔒 App Locked</h3>
+    <p class="muted">Enter your PIN to continue.</p>
+    <input id="unlockPin" class="modal-input" inputmode="numeric" maxlength="6" type="password" placeholder="PIN">
+    <div id="unlockError" class="modal-error"></div>
+    <button id="unlockBtn" class="primary-btn" type="button">Unlock</button>
+  </div>
+</div>
+
+</body>
+</html>
