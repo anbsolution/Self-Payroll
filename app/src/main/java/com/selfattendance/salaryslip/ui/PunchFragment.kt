@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -22,27 +23,28 @@ class PunchFragment : Fragment() {
         val scroll = Ui.scroll(requireContext())
         val col = Ui.column(requireContext())
         scroll.addView(col)
+
         col.addView(Ui.title(requireContext(), "Punch"))
-        col.addView(Ui.subtitle(requireContext(), "Offline-first attendance clock"))
+        col.addView(Ui.subtitle(requireContext(), "Quick attendance • works offline"))
 
         val timeCard = Ui.card(requireContext())
-        val timeInner = Ui.column(requireContext(), 0)
+        val timeInner = Ui.cardInner(requireContext())
         timeCard.addView(timeInner)
-        timeInner.addView(Ui.label(requireContext(), "CURRENT DATE & TIME"))
-        clock = Ui.value(requireContext(), "—")
-        date = Ui.subtitle(requireContext(), "—")
+        timeInner.addView(Ui.sectionLabel(requireContext(), "CURRENT TIME"))
+        clock = Ui.bigValue(requireContext(), "—")
+        date = Ui.muted(requireContext(), "—")
         timeInner.addView(clock)
         timeInner.addView(date)
         col.addView(timeCard)
 
         val statusCard = Ui.card(requireContext())
-        val statusInner = Ui.column(requireContext(), 0)
+        val statusInner = Ui.cardInner(requireContext())
         statusCard.addView(statusInner)
-        statusInner.addView(Ui.label(requireContext(), "TODAY'S STATUS"))
+        statusInner.addView(Ui.sectionLabel(requireContext(), "TODAY'S ATTENDANCE"))
         val status = Ui.value(requireContext(), "Not punched")
-        val inTime = Ui.value(requireContext(), "In: —")
-        val outTime = Ui.value(requireContext(), "Out: —")
-        val working = Ui.value(requireContext(), "Working: —")
+        val inTime = Ui.muted(requireContext(), "In time  •  —")
+        val outTime = Ui.muted(requireContext(), "Out time •  —")
+        val working = Ui.muted(requireContext(), "Working   •  —")
         statusInner.addView(status)
         statusInner.addView(inTime)
         statusInner.addView(outTime)
@@ -51,24 +53,25 @@ class PunchFragment : Fragment() {
 
         val button = Ui.button(requireContext(), "Punch In / Punch Out")
         col.addView(button)
+        col.addView(Ui.muted(requireContext(), "Your attendance is saved on this device first and can sync later."))
 
         vm.today.observe(viewLifecycleOwner) { a ->
             if (a == null) {
                 status.text = "Not punched"
-                inTime.text = "In: —"
-                outTime.text = "Out: —"
-                working.text = "Working: —"
+                inTime.text = "In time  •  —"
+                outTime.text = "Out time •  —"
+                working.text = "Working   •  —"
             } else {
                 status.text = if (a.outTime != null) "Completed" else "Checked in"
-                inTime.text = "In: ${a.inTime?.let { formatTime(it) } ?: "—"}"
-                outTime.text = "Out: ${a.outTime?.let { formatTime(it) } ?: "—"}"
-                working.text = "Working: ${a.workingMinutes / 60}h ${a.workingMinutes % 60}m"
+                inTime.text = "In time  •  ${a.inTime?.let { formatTime(it) } ?: "—"}"
+                outTime.text = "Out time •  ${a.outTime?.let { formatTime(it) } ?: "—"}"
+                working.text = "Working   •  ${a.workingMinutes / 60}h ${a.workingMinutes % 60}m"
             }
         }
 
         button.setOnClickListener {
             button.isEnabled = false
-            vm.punch { ok, message ->
+            vm.punch { _, message ->
                 if (isAdded) {
                     button.isEnabled = true
                     Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()

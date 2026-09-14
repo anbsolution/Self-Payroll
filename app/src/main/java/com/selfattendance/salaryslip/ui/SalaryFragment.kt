@@ -7,6 +7,7 @@ import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
@@ -26,33 +27,41 @@ class SalaryFragment : Fragment() {
         val scroll = Ui.scroll(requireContext())
         val col = Ui.column(requireContext())
         scroll.addView(col)
+
         col.addView(Ui.title(requireContext(), "Salary Slip"))
-        col.addView(Ui.subtitle(requireContext(), "Monthly payroll, premium preview and offline PDF"))
+        col.addView(Ui.subtitle(requireContext(), "Calculate, preview and share your monthly salary"))
 
         val ym = YearMonth.now()
         val period = Ui.card(requireContext())
-        val periodInner = Ui.column(requireContext(), 0)
+        val periodInner = Ui.cardInner(requireContext())
         period.addView(periodInner)
-        periodInner.addView(Ui.label(requireContext(), "PAY PERIOD"))
+        periodInner.addView(Ui.sectionLabel(requireContext(), "PAY PERIOD"))
         periodInner.addView(Ui.value(requireContext(), "${ym.month.name.lowercase().replaceFirstChar { it.uppercase() }} ${ym.year}"))
         col.addView(period)
 
+        val inputCard = Ui.card(requireContext())
+        val inputInner = Ui.cardInner(requireContext())
+        inputCard.addView(inputInner)
+        inputInner.addView(Ui.sectionLabel(requireContext(), "PAYROLL INPUT"))
         val overtime = Ui.input(requireContext(), "Overtime hours", "0")
-        col.addView(overtime)
+        inputInner.addView(overtime)
+        val generate = Ui.button(requireContext(), "Generate / Save PDF")
+        inputInner.addView(generate)
+        col.addView(inputCard)
 
         val preview = Ui.card(requireContext())
-        val previewInner = Ui.column(requireContext(), 0)
+        val previewInner = Ui.cardInner(requireContext())
         preview.addView(previewInner)
-        previewInner.addView(Ui.label(requireContext(), "PREMIUM PREVIEW"))
+        previewInner.addView(Ui.sectionLabel(requireContext(), "PREMIUM PREVIEW"))
         val details = Ui.value(requireContext(), "Generate a slip to calculate salary.")
+        details.textSize = 16f
         previewInner.addView(details)
         col.addView(preview)
 
-        val generate = Ui.button(requireContext(), "Generate / Save PDF")
         val share = Ui.button(requireContext(), "Share PDF", false)
         share.isEnabled = false
-        col.addView(generate)
         col.addView(share)
+        col.addView(Ui.muted(requireContext(), "PDF is generated locally. No salary data is required online."))
 
         vm.observe(ym.year, ym.monthValue).observe(viewLifecycleOwner) { slip ->
             if (slip != null) details.text = formatSlip(slip)
