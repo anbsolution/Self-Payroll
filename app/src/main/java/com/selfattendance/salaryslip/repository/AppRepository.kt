@@ -55,7 +55,6 @@ class AppRepository(private val context: Context, private val db: AppDatabase = 
         db.syncDao().upsert(SyncStateEntity(item.id, "ATTENDANCE"))
         scheduleSync()
     }
-    suspend fun getProfile() = employeeDao.get()
     suspend fun getSalary(year: Int, month: Int) = salaryDao.get(year, month)
 
     suspend fun createSalary(year: Int, month: Int, overtimeHours: Double = 0.0): SalarySlipEntity {
