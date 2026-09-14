@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity() {
             id = 1002
             inflateMenu(R.menu.bottom_nav)
             labelVisibilityMode = BottomNavigationView.LABEL_VISIBILITY_LABELED
-            itemHorizontalTranslationEnabled = false
             itemIconSize = Ui.dp(this@MainActivity, 23)
             itemPaddingTop = Ui.dp(this@MainActivity, 7)
             itemPaddingBottom = Ui.dp(this@MainActivity, 3)

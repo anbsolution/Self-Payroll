@@ -11,7 +11,7 @@ import com.google.android.material.textfield.TextInputLayout
 
 class ProfileFragment : Fragment() {
     private val vm: ProfileViewModel by viewModels()
-    private lateinit var fields: Map<String, TextInputLayout>
+    private lateinit var fields: MutableMap<String, TextInputLayout>
 
     override fun onCreateView(inflater: android.view.LayoutInflater, container: android.view.ViewGroup?, state: Bundle?): View {
         val scroll = Ui.scroll(requireContext())

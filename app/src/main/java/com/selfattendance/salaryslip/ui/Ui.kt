@@ -124,10 +124,7 @@ object Ui {
     fun input(context: Context, hint: String, value: String = ""): TextInputLayout {
         val box = TextInputLayout(context).apply {
             this.hint = hint
-            boxCornerRadiusTopStart = dp(context, 14).toFloat()
-            boxCornerRadiusTopEnd = dp(context, 14).toFloat()
-            boxCornerRadiusBottomStart = dp(context, 14).toFloat()
-            boxCornerRadiusBottomEnd = dp(context, 14).toFloat()
+            setBoxCornerRadii(dp(context, 14).toFloat(), dp(context, 14).toFloat(), dp(context, 14).toFloat(), dp(context, 14).toFloat())
             boxStrokeWidth = dp(context, 1)
             boxStrokeWidthFocused = dp(context, 2)
             setBoxBackgroundColor(ContextCompat.getColor(context, R.color.surface))
