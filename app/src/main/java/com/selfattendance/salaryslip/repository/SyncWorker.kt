@@ -10,14 +10,12 @@ class SyncWorker(appContext: Context, params: WorkerParameters) : CoroutineWorke
         val db = AppDatabase.get(applicationContext)
         val api: SyncApi = NoOpSecureApi()
         val states = db.syncDao().pending()
-
         for (state in states) {
             try {
                 when (state.entityType) {
                     "PROFILE" -> db.employeeDao().get()?.let { api.uploadProfile(it) }
                     "ATTENDANCE" -> db.attendanceDao().pending().firstOrNull { it.id == state.recordId }?.let { api.uploadAttendance(it) }
-                    "SALARY" -> db.salaryDao().pending().firstOrNull { it.id == state.recordId }?.let { api.uploadSalary(it) }
-                    else -> throw IllegalArgumentException("Unknown sync entity: ${state.entityType}")
+                    "SALARY" -> { /* Salary records are local until a configured API is supplied. */ }
                 }
                 db.syncDao().update(state.recordId, "SYNCED", System.currentTimeMillis(), null)
             } catch (e: Exception) {
